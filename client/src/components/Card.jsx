@@ -27,7 +27,7 @@ function Cards() {
         <Col key={index} md={4} className="mb-4"  style={{padding:'20px'}}>
           <Card>
             <Card.Img variant="top" src={item.Image} width={100} /> 
-            <Card.Body>
+            <Card.Body className='bg-secondary' >
               <Card.Title>{item.Name}</Card.Title> 
               <Card.Text>{item.Description}</Card.Text> 
               <Button variant="primary">Go somewhere</Button>

@@ -1,6 +1,6 @@
 const MyAd = require('../models/ad');
 
-class myAdController {
+class myAdController { 
     controller() {
 
     }
@@ -15,7 +15,6 @@ class myAdController {
             return res.status(500).json({ message: 'server error', status: 500 })
         }
     }
-
 
     async getById(req, res) {
         try {
@@ -60,7 +59,7 @@ class myAdController {
             const id = req.params.id;
             if (!id) return res.status(401).json({ message: 'your given id not found..!', status: 401 })
             const Deleted = await MyAd.findByIdAndDelete(id);
-            if (!Deleted) return res.status(401).json({ message: 'your post is not Deleted', status: 401 });
+            if (!Deleted) return res.status(401).json({ message: 'your post is not found', status: 401 });
             return res.status(200).json(Deleted)
         } catch (err) {
             return res.status(500).json({ message: 'server error', status: 500 })

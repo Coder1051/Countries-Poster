@@ -8,7 +8,6 @@ const Post = () => {
     Image: '',
     Description: ''
   });
-
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,6 +18,7 @@ const Post = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+
       // Make API request to create the post
       const response = await axios.post('http://localhost:4300/api/v1/ads', formData);
       console.log('Post created successfully:', response.data);
@@ -29,8 +29,6 @@ const Post = () => {
         Image: '',
         Description: ''
       });
-
-      
       
     } catch (error) {
       console.error('Error creating post:', error);
