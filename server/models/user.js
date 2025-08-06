@@ -19,6 +19,9 @@ const userSchema = new Schema({
     contact: {
         type: SchemaTypes.Number,
         required: true
+    },
+    Role:{
+        type : SchemaTypes.ObjectId
     }
 })
 const User = new model(("User"), userSchema)

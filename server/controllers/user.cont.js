@@ -1,4 +1,6 @@
 const User = require('../models/user')
+const bcrypt = require('bcrypt')
+const Role = require('../models/roles')
 
 class userController {
     controller() {
@@ -27,12 +29,22 @@ class userController {
 
     async Create(req, res) {
         try {
-            const { name, email, dob, password, contact } = req.body;
-            if (!name || !email || !password) return res.status(404).json({ Message: 'Please provide Complete data...', Status: 404 })
-            const Created = await User.create({ name, email, dob, password, contact })
+            const obj = req.body;
+            if (!obj.name || !obj.email || !obj.password) return res.status(404).json({ Message: 'Please provide Complete data...', Status: 404 })
+            // Assign default role if not provided
+            if (!obj.Role) {
+                const guestRole = await Role.findOne({ Name: "Guest" });
+                obj.Role = guestRole;
+            }
+            const passwordHash = await bcrypt.hash(obj.password, 10);
+            console.log("plain :",obj.password);
+            console.log("Hashed :",passwordHash);
+            obj.password = passwordHash;
+            const Created = await User.create(obj)
             res.header("location", `${req.originalUrl},${Created._id}`)
             return res.status(200).json(Created)
         } catch (error) {
+            console.error(error);
             return res.status(500).json({ message: "Server Error", Status: 500 })
         }
     }
@@ -52,18 +64,33 @@ class userController {
     async Delete(req, res) {
         try {
             const id = req.params.id;
-            if (!id) return res.status(404).json({ message: 'your given id not found..!', status: 404 })
             const Deleted = await User.findByIdAndDelete(id);
-            if (!Deleted) return res.status(404).json({message: 'your post is not found', status: 404 });
-            return res.status(200).json(Deleted)
-        } catch (error) {
-            return res.status(500).json({ message: "server error", Status: 500 })
+            if (!id) return res.status(400).json({ message: ` Given ID:${id} not Found!`, Status: 400 });
+            return res.status(200).json(Deleted);
+        } catch (err) {
+            return res.status(500).json({ message: 'Server Error', Status: 500 });
         }
     }
 
+async MakeAdmin(req, res) {
+    try {
+        const id = req.params.id;
+        const adminRole = await Role.findOne({ Name: "Admin" });
+        if (!adminRole) return res.status(404).json({ message: "Admin role not found" });
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            { Role: adminRole._id },
+            { new: true }
+        );
+        if (!updatedUser) return res.status(404).json({ message: "User not found" });
+
+        return res.status(200).json({ message: "User promoted to Admin", user: updatedUser });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error });
+    }
+}
 
 
 }
-
 const UserController = new userController
 module.exports = UserController
