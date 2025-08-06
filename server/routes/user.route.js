@@ -1,11 +1,16 @@
 const { Router } = require('express')
 const UserController = require('../controllers/user.cont')
 const UserRouter = Router()
+
+UserRouter.route("/admin/signup")
+.post(UserController.MakeAdmin);
+
 UserRouter.route("/")
     .get(UserController.getAll)
     .post(UserController.Create)
-    UserRouter.route("/:id")
+UserRouter.route("/:id")
     .get(UserController.getById)
     .put(UserController.Update)
     .delete(UserController.Delete)
+
 module.exports = UserRouter
